@@ -133,7 +133,7 @@ const Timer = {
     this.timeEl = $('#timerTime');
     this.labelEl = $('#timerLabel');
     this.ringEl = $('#timerRing');
-    this.toggleBtn = $('#timerToggle');
+    this.toggleBtn = $('#timerActionBtn');
     this.card = $('#timerCard');
     this.render();
 
