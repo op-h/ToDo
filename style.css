@@ -973,7 +973,7 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
   font-weight: 600;
   box-shadow: none;
   border: 1px solid var(--accent);
-  color: #ffffff !important;
+  color: #000000 !important;
 }
 
 .timer-controls .btn-icon-round {
@@ -981,18 +981,17 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
   padding: 0;
   border-radius: var(--radius-full);
   font-size: 1.2rem;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  color: #ffffff;
-  transition: border-color var(--transition), color var(--transition);
+  background: var(--accent);
+  border: none;
+  color: #000000;
+  transition: opacity var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .timer-controls .btn-icon-round:hover {
-  border-color: var(--border-hover);
-  color: var(--text-primary);
+  opacity: 0.8;
 }
 
 .timer-link {
