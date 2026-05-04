@@ -162,7 +162,26 @@ const Timer = {
 
     this.toggleBtn.addEventListener('click', () => this.toggle());
     $('#timerReset').addEventListener('click', () => { this.reset(); SFX.click(); });
-    $('#timerTaskLink').addEventListener('change', e => { this.taskId = e.target.value || null; });
+    
+    // Custom Dropdown logic
+    const dDrop = $('#timerTaskDropdown');
+    const dTrig = $('#timerTaskTrigger');
+    const dMenu = $('#timerTaskMenu');
+    if (dTrig) {
+      dTrig.addEventListener('click', (e) => { e.stopPropagation(); dDrop.classList.toggle('active'); });
+      dMenu.addEventListener('click', (e) => {
+        const li = e.target.closest('li');
+        if (!li) return;
+        this.taskId = li.dataset.value || null;
+        $('#timerTaskLabel').textContent = li.textContent;
+        $$('li', dMenu).forEach(x => x.classList.remove('active'));
+        li.classList.add('active');
+        dDrop.classList.remove('active');
+      });
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#timerTaskDropdown')) dDrop.classList.remove('active');
+      });
+    }
   },
 
   set(mode, mins) {
@@ -187,7 +206,6 @@ const Timer = {
     
     this.card.classList.add('running');
     this.toggleBtn.innerHTML = '❚❚ Pause';
-    this.toggleBtn.classList.replace('btn-accent', 'btn-ghost');
     
     this.iv = setInterval(() => {
       const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
@@ -205,7 +223,6 @@ const Timer = {
     this.running = false;
     this.card.classList.remove('running');
     this.toggleBtn.innerHTML = '▶ Start Focus';
-    this.toggleBtn.classList.replace('btn-ghost', 'btn-accent');
     if (this.iv) { clearInterval(this.iv); this.iv = null; }
     document.title = 'OPH_TASKD — Mission Dashboard';
   },
@@ -248,11 +265,19 @@ const Timer = {
   },
 
   updateOptions() {
-    const sel = $('#timerTaskLink'), cur = sel.value;
-    sel.innerHTML = '<option value="">— none —</option>';
+    const menu = $('#timerTaskMenu');
+    const curLabel = $('#timerTaskLabel');
+    if (!menu) return;
+
+    menu.innerHTML = '<li data-value="" class="' + (!this.taskId ? 'active' : '') + '">— none —</li>';
+    let labelText = '— none —';
+    
     State.tasks.filter(t => !t.completed).forEach(t => {
-      sel.innerHTML += `<option value="${t.id}" ${t.id === cur ? 'selected' : ''}>${esc(t.title)}</option>`;
+      const isActive = t.id === this.taskId;
+      if (isActive) labelText = t.title;
+      menu.innerHTML += `<li data-value="${t.id}" class="${isActive ? 'active' : ''}">${esc(t.title)}</li>`;
     });
+    curLabel.textContent = labelText;
   }
 };
 
