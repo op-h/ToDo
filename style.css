@@ -306,7 +306,7 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 .sort-trigger svg { width: 14px; height: 14px; color: var(--text-muted); transition: color var(--transition); }
 .sort-trigger:hover svg, .sort-dropdown.active .sort-trigger svg { color: var(--accent); }
 
-.sort-trigger .chevron { width: 12px; height: 12px; margin-left: 2px; transition: transform 0.3s var(--ease); }
+.sort-trigger .chevron { width: 12px; height: 12px; margin-left: 6px; transition: transform 0.3s var(--ease); }
 .sort-dropdown.active .chevron { transform: rotate(180deg); }
 
 .sort-menu {
@@ -513,7 +513,7 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 /* ============================================================
    TASK CARDS — Clean, airy
    ============================================================ */
-.task-list { display: flex; flex-direction: column; gap: 8px; }
+.task-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
 
 .task-card {
   background: var(--bg-surface);

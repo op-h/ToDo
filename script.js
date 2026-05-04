@@ -192,6 +192,7 @@ function fmtSec(s) { const h = Math.floor(s / 3600), m = Math.floor((s % 3600) /
 
 /* ─── UI ─── */
 const UI = {
+  expandedTasks: new Set(),
   init() {
     this.list = $('#taskList');
     this.addCard = $('#addTaskToggle').closest('.collapsible-card');
@@ -376,7 +377,7 @@ const UI = {
           <button class="action-btn del" data-act="del" data-id="${t.id}" title="Delete">${Icons.trash}</button>
         </div>
       </div>
-      <div class="subtask-area" id="subs-${t.id}">
+      <div class="subtask-area ${this.expandedTasks.has(t.id) ? 'open' : ''}" id="subs-${t.id}">
         <div class="subtask-head">
           <span>Sub-tasks</span>
           <span class="subtask-progress">${sd}/${st}</span>
@@ -414,7 +415,11 @@ const UI = {
 
     // Toggle subtask visibility
     $$('[data-act="subs"]').forEach(el => el.addEventListener('click', () => {
-      $(`#subs-${el.dataset.id}`).classList.toggle('open');
+      const id = el.dataset.id;
+      const area = $(`#subs-${id}`);
+      area.classList.toggle('open');
+      if (area.classList.contains('open')) this.expandedTasks.add(id);
+      else this.expandedTasks.delete(id);
       SFX.click();
     }));
 
@@ -433,8 +438,8 @@ const UI = {
       const inp = $(`[data-sub-in="${el.dataset.id}"]`);
       if (!inp.value.trim()) return;
       State.addSub(el.dataset.id, inp.value);
+      this.expandedTasks.add(el.dataset.id);
       SFX.add(); this.render();
-      setTimeout(() => { const s = $(`#subs-${el.dataset.id}`); if (s) s.classList.add('open'); }, 10);
     }));
 
     // Enter in sub input
@@ -444,8 +449,8 @@ const UI = {
       const id = inp.dataset.subIn;
       if (!inp.value.trim()) return;
       State.addSub(id, inp.value);
+      this.expandedTasks.add(id);
       SFX.add(); this.render();
-      setTimeout(() => { const s = $(`#subs-${id}`); if (s) s.classList.add('open'); }, 10);
     }));
   },
 
