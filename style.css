@@ -842,8 +842,8 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 
 .timer-display {
   position: relative;
-  width: 220px;
-  height: 220px;
+  width: 200px;
+  height: 200px;
   margin: 0 auto 24px;
   display: flex;
   align-items: center;
@@ -859,7 +859,7 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 
 .timer-ring circle {
   fill: none;
-  stroke-width: 3.5;
+  stroke-width: 2.5;
 }
 
 .ring-bg { stroke: var(--bg-elevated); }
@@ -885,10 +885,10 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 
 .timer-time {
   font-family: var(--font-mono);
-  font-size: 3.6rem;
-  font-weight: 700;
+  font-size: 3.2rem;
+  font-weight: 500;
   color: var(--text-primary);
-  letter-spacing: -2px;
+  letter-spacing: -1px;
   margin-bottom: -6px;
   line-height: 1;
 }
@@ -896,8 +896,8 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 .collapsible-card.running .timer-time { color: var(--accent); }
 
 .timer-label {
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.7rem;
+  font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -960,21 +960,28 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 }
 
 .timer-controls .btn-lg {
-  min-width: 170px;
+  min-width: 140px;
   border-radius: var(--radius-full);
-  padding: 12px 28px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  box-shadow: 0 4px 15px var(--accent-glow);
+  padding: 10px 24px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: none;
+  border: 1px solid var(--accent);
 }
 
 .timer-controls .btn-ghost {
-  width: 46px; height: 46px;
+  width: 40px; height: 40px;
   padding: 0;
   border-radius: var(--radius-full);
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   background: var(--bg-surface);
   border: 1px solid var(--border);
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.timer-controls .btn-ghost:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
 }
 
 .timer-link {
@@ -995,29 +1002,31 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 }
 
 .timer-link select {
-  background: var(--bg-elevated);
+  background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 0.78rem;
-  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 6px 28px 6px 14px;
   cursor: pointer;
   outline: none;
-}
-
-.timer-link select {
-  padding: 6px 12px;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xs);
-  color: var(--text-secondary);
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%23a1a9b1%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.23%207.21a.75.75%200%20011.06.02L10%2011.168l3.71-3.938a.75.75%200%20111.08%201.04l-4.25%204.5a.75.75%200%2001-1.08%200l-4.25-4.5a.75.75%200%2001.02-1.06z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  transition: all var(--transition);
   max-width: 260px;
   width: 100%;
 }
 
+.timer-link select:hover, .timer-link select:focus {
+  border-color: var(--accent);
+  background-color: var(--bg-elevated);
+}
 .timer-link select:focus { outline: none; border-color: var(--accent); }
 .timer-link select option { background: var(--bg-surface); }
 
