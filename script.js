@@ -131,6 +131,8 @@ const Timer = {
   init() {
     this.timeEl = $('#timerTime');
     this.labelEl = $('#timerLabel');
+    this.ringEl = $('#timerRing');
+    this.toggleBtn = $('#timerToggle');
     this.card = $('#timerCard');
     this.render();
 
@@ -138,43 +140,89 @@ const Timer = {
       $$('.preset-btn').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
       this.set(b.dataset.mode, +b.dataset.minutes);
+      SFX.click();
     }));
 
-    $('#timerStart').addEventListener('click', () => this.start());
-    $('#timerPause').addEventListener('click', () => this.pause());
-    $('#timerReset').addEventListener('click', () => this.reset());
+    this.toggleBtn.addEventListener('click', () => this.toggle());
+    $('#timerReset').addEventListener('click', () => { this.reset(); SFX.click(); });
     $('#timerTaskLink').addEventListener('change', e => { this.taskId = e.target.value || null; });
   },
 
   set(mode, mins) {
-    this.total = mins * 60; this.remaining = this.total; this.pause();
+    this.total = mins * 60; 
+    this.remaining = this.total; 
+    this.pause();
     this.labelEl.textContent = mode === 'pomodoro' ? 'Focus Session' : mode === 'short' ? 'Short Break' : mode === 'long' ? 'Long Break' : `${mins} min Session`;
     this.render();
+  },
+
+  toggle() {
+    if (this.running) this.pause();
+    else this.start();
+    SFX.click();
   },
 
   start() {
     if (this.running) return;
     this.running = true;
     this.card.classList.add('running');
+    this.toggleBtn.innerHTML = '❚❚ Pause';
+    this.toggleBtn.classList.replace('btn-accent', 'btn-ghost');
+    
     this.iv = setInterval(() => {
       this.remaining--;
       if (this.remaining <= 0) {
-        this.remaining = 0; this.pause();
-        SFX.timerEnd();
-        Toast.show('⏰ Time\'s up!');
-        if (this.taskId) { const t = State.tasks.find(x => x.id === this.taskId); if (t) { t.timeSpent += this.total; State.persist(); UI.render(); } }
+        this.remaining = 0; 
+        this.complete();
       }
       this.render();
     }, 1000);
   },
 
-  pause() { this.running = false; this.card.classList.remove('running'); if (this.iv) { clearInterval(this.iv); this.iv = null; } },
-  reset() { this.pause(); this.remaining = this.total; this.render(); },
+  pause() {
+    this.running = false;
+    this.card.classList.remove('running');
+    this.toggleBtn.innerHTML = '▶ Start Focus';
+    this.toggleBtn.classList.replace('btn-ghost', 'btn-accent');
+    if (this.iv) { clearInterval(this.iv); this.iv = null; }
+    document.title = 'OPH_TASKD — Mission Dashboard';
+  },
+
+  reset() {
+    this.pause();
+    this.remaining = this.total;
+    this.render();
+  },
+
+  complete() {
+    this.pause();
+    SFX.timerEnd();
+    Toast.show('⏰ Mission Time Completed!');
+    if (this.taskId) {
+      const t = State.tasks.find(x => x.id === this.taskId);
+      if (t) {
+        t.timeSpent += this.total;
+        State.persist();
+        UI.render();
+      }
+    }
+  },
 
   render() {
-    const m = String(Math.floor(this.remaining / 60)).padStart(2, '0');
-    const s = String(this.remaining % 60).padStart(2, '0');
-    this.timeEl.textContent = `${m}:${s}`;
+    const m = Math.floor(this.remaining / 60);
+    const s = this.remaining % 60;
+    const timeStr = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    this.timeEl.textContent = timeStr;
+
+    // Ring progress
+    const pct = this.remaining / this.total;
+    const offset = 283 * (1 - pct);
+    this.ringEl.style.strokeDashoffset = offset;
+
+    // Tab title
+    if (this.running) {
+      document.title = `[${timeStr}] OPH_TASKD`;
+    }
   },
 
   updateOptions() {

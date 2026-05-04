@@ -146,22 +146,30 @@
         </div>
         <div class="collapsible-body">
           <div class="timer-inner">
-            <div class="timer-time" id="timerTime">25:00</div>
-            <div class="timer-label" id="timerLabel">Focus Session</div>
+            <div class="timer-display">
+              <svg class="timer-ring" viewBox="0 0 100 100">
+                <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                <circle class="ring-fg" id="timerRing" cx="50" cy="50" r="45"></circle>
+              </svg>
+              <div class="timer-text-group">
+                <div class="timer-time" id="timerTime">25:00</div>
+                <div class="timer-label" id="timerLabel">Focus Session</div>
+              </div>
+            </div>
+
             <div class="timer-presets">
-              <button class="preset-btn active" data-mode="pomodoro" data-minutes="25">25 min</button>
-              <button class="preset-btn" data-mode="short" data-minutes="5">5 min</button>
-              <button class="preset-btn" data-mode="long" data-minutes="15">15 min</button>
-              <button class="preset-btn" data-mode="custom" data-minutes="45">45 min</button>
-              <button class="preset-btn" data-mode="custom" data-minutes="60">60 min</button>
+              <button class="preset-btn active" data-mode="pomodoro" data-minutes="25" title="Focus Mode">🎯 25m</button>
+              <button class="preset-btn" data-mode="short" data-minutes="5" title="Short Break">☕ 5m</button>
+              <button class="preset-btn" data-mode="long" data-minutes="15" title="Long Break">🌴 15m</button>
             </div>
+
             <div class="timer-controls">
-              <button class="btn btn-accent btn-sm" id="timerStart">▶ Start</button>
-              <button class="btn btn-ghost btn-sm" id="timerPause">❚❚ Pause</button>
-              <button class="btn btn-ghost btn-sm" id="timerReset">↺ Reset</button>
+              <button class="btn btn-accent btn-lg" id="timerToggle">▶ Start Focus</button>
+              <button class="btn btn-ghost" id="timerReset" title="Reset Timer">↺</button>
             </div>
+
             <div class="timer-link">
-              <label for="timerTaskLink">Link to task</label>
+              <label for="timerTaskLink">Link to mission</label>
               <select id="timerTaskLink">
                 <option value="">— none —</option>
               </select>

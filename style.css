@@ -834,76 +834,104 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 /* ============================================================
    TIMER — Inner content (card chrome via .collapsible-card)
    ============================================================ */
+/* ─── TIMER — Premium Interactive Display ─── */
 .timer-inner {
   text-align: center;
-  padding-top: 8px;
+  padding: 10px 0 5px;
 }
 
-.collapsible-card.running .collapsible-header h3 {
-  color: var(--accent);
+.timer-display {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-ring {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-ring circle {
+  fill: none;
+  stroke-width: 4;
+}
+
+.ring-bg { stroke: var(--bg-elevated); }
+.ring-fg {
+  stroke: var(--accent);
+  stroke-dasharray: 283; /* 2 * PI * 45 */
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+  filter: drop-shadow(0 0 8px var(--accent-glow));
+}
+
+.collapsible-card.running .ring-fg {
+  animation: ring-pulse 4s ease-in-out infinite;
+}
+
+@keyframes ring-pulse {
+  0%, 100% { filter: drop-shadow(0 0 8px var(--accent-glow)); }
+  50%      { filter: drop-shadow(0 0 15px var(--accent)); }
+}
+
+.timer-text-group {
+  z-index: 10;
 }
 
 .timer-time {
   font-family: var(--font-mono);
-  font-size: 3.2rem;
-  font-weight: 600;
+  font-size: 3.5rem;
+  font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: 4px;
-  margin-bottom: 4px;
-  transition: text-shadow 0.5s ease;
+  letter-spacing: -1px;
+  margin-bottom: -4px;
 }
 
 .collapsible-card.running .timer-time {
   color: var(--accent);
-  text-shadow: 0 0 30px var(--accent-glow);
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { text-shadow: 0 0 10px var(--accent-glow); }
-  50%      { text-shadow: 0 0 30px rgba(159,239,0,0.2); }
 }
 
 .timer-label {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
   color: var(--text-muted);
-  margin-bottom: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .timer-presets {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   justify-content: center;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.preset-btn {
-  padding: 6px 14px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  color: var(--text-secondary);
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.preset-btn:hover { border-color: var(--border-hover); color: var(--text-primary); }
-
-.preset-btn.active {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: var(--border-accent);
+  margin-bottom: 24px;
 }
 
 .timer-controls {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   justify-content: center;
-  margin-bottom: 14px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.timer-controls .btn-lg {
+  min-width: 160px;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+}
+
+.timer-controls .btn-ghost {
+  width: 44px; height: 44px;
+  padding: 0;
+  border-radius: var(--radius-full);
+  font-size: 1.2rem;
 }
 
 .timer-link {
