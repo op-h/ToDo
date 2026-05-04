@@ -127,6 +127,7 @@ const Toast = {
 /* ─── Timer ─── */
 const Timer = {
   total: 25 * 60, remaining: 25 * 60, running: false, iv: null, taskId: null,
+  startTime: 0, baseRemaining: 0,
 
   init() {
     this.timeEl = $('#timerTime');
@@ -136,12 +137,28 @@ const Timer = {
     this.card = $('#timerCard');
     this.render();
 
-    $$('.preset-btn').forEach(b => b.addEventListener('click', () => {
-      $$('.preset-btn').forEach(x => x.classList.remove('active'));
+    $$('.preset-pill').forEach(b => b.addEventListener('click', () => {
+      if (b.id === 'customTimerBtn') {
+        $('#customTimerBox').classList.toggle('hidden');
+        return;
+      }
+      $$('.preset-pill').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
+      $('#customTimerBox').classList.add('hidden');
       this.set(b.dataset.mode, +b.dataset.minutes);
       SFX.click();
     }));
+
+    $('#applyCustomTimer').addEventListener('click', () => {
+      const mins = +$('#customMinutes').value;
+      if (mins > 0) {
+        $$('.preset-pill').forEach(x => x.classList.remove('active'));
+        $('#customTimerBtn').classList.add('active');
+        this.set('custom', mins);
+        $('#customTimerBox').classList.add('hidden');
+        SFX.click();
+      }
+    });
 
     this.toggleBtn.addEventListener('click', () => this.toggle());
     $('#timerReset').addEventListener('click', () => { this.reset(); SFX.click(); });
@@ -165,18 +182,23 @@ const Timer = {
   start() {
     if (this.running) return;
     this.running = true;
+    this.startTime = Date.now();
+    this.baseRemaining = this.remaining;
+    
     this.card.classList.add('running');
     this.toggleBtn.innerHTML = '❚❚ Pause';
     this.toggleBtn.classList.replace('btn-accent', 'btn-ghost');
     
     this.iv = setInterval(() => {
-      this.remaining--;
+      const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+      this.remaining = Math.max(0, this.baseRemaining - elapsed);
+      
       if (this.remaining <= 0) {
         this.remaining = 0; 
         this.complete();
       }
       this.render();
-    }, 1000);
+    }, 200); // Higher frequency for smoother UI, but math stays accurate
   },
 
   pause() {

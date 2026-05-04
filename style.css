@@ -834,7 +834,7 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 /* ============================================================
    TIMER — Inner content (card chrome via .collapsible-card)
    ============================================================ */
-/* ─── TIMER — Premium Interactive Display ─── */
+/* ─── TIMER — Premium Pro Display ─── */
 .timer-inner {
   text-align: center;
   padding: 10px 0 5px;
@@ -859,7 +859,7 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 
 .timer-ring circle {
   fill: none;
-  stroke-width: 4;
+  stroke-width: 3.5;
 }
 
 .ring-bg { stroke: var(--bg-elevated); }
@@ -868,49 +868,87 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
   stroke-dasharray: 283; /* 2 * PI * 45 */
   stroke-dashoffset: 0;
   stroke-linecap: round;
-  transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
-  filter: drop-shadow(0 0 8px var(--accent-glow));
+  transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease;
+  filter: drop-shadow(0 0 10px var(--accent-glow));
 }
 
 .collapsible-card.running .ring-fg {
-  animation: ring-pulse 4s ease-in-out infinite;
+  animation: ring-pulse 3s ease-in-out infinite;
 }
 
 @keyframes ring-pulse {
-  0%, 100% { filter: drop-shadow(0 0 8px var(--accent-glow)); }
-  50%      { filter: drop-shadow(0 0 15px var(--accent)); }
+  0%, 100% { filter: drop-shadow(0 0 10px var(--accent-glow)); opacity: 1; }
+  50%      { filter: drop-shadow(0 0 20px var(--accent)); opacity: 0.8; }
 }
 
-.timer-text-group {
-  z-index: 10;
-}
+.timer-text-group { z-index: 10; }
 
 .timer-time {
   font-family: var(--font-mono);
-  font-size: 3.5rem;
+  font-size: 3.6rem;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -1px;
-  margin-bottom: -4px;
+  letter-spacing: -2px;
+  margin-bottom: -6px;
+  line-height: 1;
 }
 
-.collapsible-card.running .timer-time {
-  color: var(--accent);
-}
+.collapsible-card.running .timer-time { color: var(--accent); }
 
 .timer-label {
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
 }
 
 .timer-presets {
   display: flex;
   gap: 8px;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.preset-pill {
+  padding: 6px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.preset-pill:hover { border-color: var(--border-hover); color: var(--text-primary); background: var(--bg-hover); }
+.preset-pill.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.custom-timer-box {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 20px;
+  animation: slideDown 0.3s var(--ease);
+}
+
+.custom-timer-box input {
+  width: 70px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 6px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-align: center;
 }
 
 .timer-controls {
@@ -918,34 +956,54 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
   gap: 12px;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .timer-controls .btn-lg {
-  min-width: 160px;
-  padding: 12px 24px;
-  font-size: 0.9rem;
+  min-width: 170px;
+  border-radius: var(--radius-full);
+  padding: 12px 28px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  box-shadow: 0 4px 15px var(--accent-glow);
 }
 
 .timer-controls .btn-ghost {
-  width: 44px; height: 44px;
+  width: 46px; height: 46px;
   padding: 0;
   border-radius: var(--radius-full);
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
 }
 
 .timer-link {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
   align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
 }
 
-.timer-link label {
-  font-size: 0.7rem;
+.timer-link span {
+  font-size: 0.65rem;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+}
+
+.timer-link select {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  padding: 6px 12px;
+  cursor: pointer;
+  outline: none;
 }
 
 .timer-link select {
