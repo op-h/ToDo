@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPH_TASKD — Mission Dashboard</title>
+  <meta name="description" content="A minimal, premium cybersecurity-themed task dashboard with Pomodoro timer and sub-tasks.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ─── Top Nav (frosted glass) ─── -->
+    <nav class="topnav">
+      <div class="topnav-inner">
+        <div class="brand">
+          <div class="brand-icon">‹/›</div>
+          <h1><span>OPH</span>_TASKD</h1>
+        </div>
+
+        <div class="search-box">
+          <!-- Search icon (inline SVG — no external deps) -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/></svg>
+          <input type="text" id="searchInput" placeholder="Search tasks…" autocomplete="off" aria-label="Search tasks">
+        </div>
+
+        <div class="nav-actions">
+          <div class="sort-dropdown" id="sortDropdown">
+            <button class="sort-trigger" id="sortTrigger" aria-label="Sort missions">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 3.75A.75.75 0 012.75 3h11.5a.75.75 0 010 1.5H2.75A.75.75 0 012 3.75zm0 4A.75.75 0 012.75 7h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 012 7.75zm0 4A.75.75 0 012.75 11h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 012 11.75z" clip-rule="evenodd"/></svg>
+              <span id="sortCurrentLabel">Newest first</span>
+              <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+            </button>
+            <ul class="sort-menu" id="sortMenu">
+              <li data-value="date-desc" class="active">Newest first</li>
+              <li data-value="date-asc">Oldest first</li>
+              <li data-value="priority">By priority</li>
+              <li data-value="status">By status</li>
+              <li data-value="due">By due date</li>
+            </ul>
+          </div>
+
+          <button class="nav-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+            <!-- Sun icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 2zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 15zm-8-5a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 012 10zm13 0a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 0115 10zM4.343 4.343a.75.75 0 011.06 0l1.061 1.06a.75.75 0 11-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.06-1.06a.75.75 0 010-1.061zM4.343 15.657a.75.75 0 010-1.06l1.06-1.061a.75.75 0 111.061 1.06l-1.06 1.061a.75.75 0 01-1.061 0zm9.193-9.193a.75.75 0 010-1.06l1.06-1.061a.75.75 0 111.061 1.06l-1.06 1.06a.75.75 0 01-1.061 0zM10 7a3 3 0 100 6 3 3 0 000-6z"/></svg>
+          </button>
+
+          <button class="nav-btn" id="shortcutsBtn" title="Keyboard shortcuts" aria-label="Keyboard shortcuts">
+            <!-- Keyboard icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 4.75A2.75 2.75 0 014.75 2h10.5A2.75 2.75 0 0118 4.75v6.5A2.75 2.75 0 0115.25 14H4.75A2.75 2.75 0 012 11.25v-6.5zm6.25 1a.75.75 0 00-.75.75v.5c0 .414.336.75.75.75h3.5a.75.75 0 00.75-.75v-.5a.75.75 0 00-.75-.75h-3.5zM5.5 9.25a.75.75 0 000 1.5h9a.75.75 0 000-1.5h-9z" clip-rule="evenodd"/></svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ─── Main Column ─── -->
+    <main class="main-column">
+
+      <!-- Terminal header -->
+      <div class="page-title">
+        <h2>
+          <span class="prompt">$</span>
+          <span class="typed" id="typingTitle" data-text="./load_missions"></span><span class="cursor-blink"></span>
+        </h2>
+      </div>
+
+      <!-- Filter Bar + Sort (tasks first) -->
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-pill active" data-filter="all">All <span class="count" id="countAll">0</span></button>
+        <button class="filter-pill" data-filter="pending">Pending <span class="count" id="countPending">0</span></button>
+        <button class="filter-pill" data-filter="completed">Done <span class="count" id="countDone">0</span></button>
+        <div class="filter-divider"></div>
+        <button class="filter-pill active" data-pf="all">Any Priority</button>
+        <button class="filter-pill" data-pf="high">🔴 High</button>
+        <button class="filter-pill" data-pf="medium">🟡 Medium</button>
+        <button class="filter-pill" data-pf="low">🟢 Low</button>
+      </div>
+
+      <!-- Task List (at top) -->
+      <div class="task-list" id="taskList"></div>
+
+      <!-- Add Task (collapsible) -->
+      <section class="collapsible-card" aria-label="Add task">
+        <div class="collapsible-header" id="addTaskToggle">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"/></svg>
+            New Mission
+          </h3>
+          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+        </div>
+        <div class="collapsible-body">
+          <form class="form-grid" id="addTaskForm">
+            <div class="form-group span-2">
+              <label for="taskTitle">Title</label>
+              <input type="text" id="taskTitle" placeholder="What needs to be done?" required>
+            </div>
+            <div class="form-group span-2">
+              <label for="taskDesc">Description</label>
+              <textarea id="taskDesc" placeholder="Optional details…" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="taskCategory">Category</label>
+              <select id="taskCategory">
+                <option value="general">General</option>
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+                <option value="study">Study</option>
+                <option value="security">Security</option>
+                <option value="bug">Bug Fix</option>
+                <option value="feature">Feature</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="taskPriority">Priority</label>
+              <select id="taskPriority">
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="taskDue">Due Date</label>
+              <input type="date" id="taskDue">
+            </div>
+            <div class="form-footer">
+              <button type="submit" class="btn btn-accent" id="addTaskBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"/></svg>
+                Add Task
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Focus Timer (collapsible) -->
+      <section class="collapsible-card collapsed" id="timerCard" aria-label="Focus timer">
+        <div class="collapsible-header" id="timerToggle">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5H10.75V5z" clip-rule="evenodd"/></svg>
+            Focus Timer
+          </h3>
+          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+        </div>
+        <div class="collapsible-body">
+          <div class="timer-inner">
+            <div class="timer-time" id="timerTime">25:00</div>
+            <div class="timer-label" id="timerLabel">Focus Session</div>
+            <div class="timer-presets">
+              <button class="preset-btn active" data-mode="pomodoro" data-minutes="25">25 min</button>
+              <button class="preset-btn" data-mode="short" data-minutes="5">5 min</button>
+              <button class="preset-btn" data-mode="long" data-minutes="15">15 min</button>
+              <button class="preset-btn" data-mode="custom" data-minutes="45">45 min</button>
+              <button class="preset-btn" data-mode="custom" data-minutes="60">60 min</button>
+            </div>
+            <div class="timer-controls">
+              <button class="btn btn-accent btn-sm" id="timerStart">▶ Start</button>
+              <button class="btn btn-ghost btn-sm" id="timerPause">❚❚ Pause</button>
+              <button class="btn btn-ghost btn-sm" id="timerReset">↺ Reset</button>
+            </div>
+            <div class="timer-link">
+              <label for="timerTaskLink">Link to task</label>
+              <select id="timerTaskLink">
+                <option value="">— none —</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ─── Edit Modal ─── -->
+  <div class="modal-bg" id="editModal">
+    <div class="modal-box">
+      <h3>Edit Mission</h3>
+      <form id="editForm">
+        <div class="form-group">
+          <label for="editTitle">Title</label>
+          <input type="text" id="editTitle" required>
+        </div>
+        <div class="form-group">
+          <label for="editDesc">Description</label>
+          <textarea id="editDesc" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="editCategory">Category</label>
+          <select id="editCategory">
+            <option value="general">General</option>
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+            <option value="study">Study</option>
+            <option value="security">Security</option>
+            <option value="bug">Bug Fix</option>
+            <option value="feature">Feature</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editPriority">Priority</label>
+          <select id="editPriority">
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editDue">Due Date</label>
+          <input type="date" id="editDue">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="editCancel">Cancel</button>
+          <button type="submit" class="btn btn-accent">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ─── Confirm Delete Modal ─── -->
+  <div class="modal-bg" id="confirmModal">
+    <div class="modal-box">
+      <div class="confirm-content">
+        <div class="warn-icon">⚠️</div>
+        <p>Delete this task?</p>
+        <p class="subtext">"<span id="confirmTaskName"></span>" will be permanently removed.</p>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+          <button class="btn btn-danger" id="confirmDelete">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Shortcuts Panel ─── -->
+  <div class="shortcuts-panel" aria-label="Keyboard shortcuts">
+    <h4>Shortcuts</h4>
+    <div class="sc-row"><span>New task</span><kbd>N</kbd></div>
+    <div class="sc-row"><span>Search</span><kbd>/</kbd></div>
+    <div class="sc-row"><span>Submit</span><kbd>Ctrl+↵</kbd></div>
+    <div class="sc-row"><span>Close</span><kbd>Esc</kbd></div>
+    <div class="sc-row"><span>This panel</span><kbd>?</kbd></div>
+  </div>
+
+  <!-- ─── Toasts ─── -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
