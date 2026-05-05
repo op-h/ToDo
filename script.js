@@ -109,6 +109,17 @@ const State = {
     this.tasks.splice(ti, 0, item);
     this.sort = 'manual';
     this.persist();
+  },
+
+  reorderSub(tid, fromSid, toSid) {
+    const t = this.tasks.find(x => x.id === tid);
+    if (!t) return;
+    const fi = t.subtasks.findIndex(s => s.id === fromSid);
+    const ti = t.subtasks.findIndex(s => s.id === toSid);
+    if (fi < 0 || ti < 0) return;
+    const [item] = t.subtasks.splice(fi, 1);
+    t.subtasks.splice(ti, 0, item);
+    this.persist();
   }
 };
 
@@ -480,7 +491,7 @@ const UI = {
         </div>
         <ul class="subtask-list">
           ${t.subtasks.map(s => `
-            <li class="subtask-item ${s.completed ? 'done' : ''}">
+            <li class="subtask-item ${s.completed ? 'done' : ''}" draggable="true" data-tid="${t.id}" data-sid="${s.id}">
               <input type="checkbox" ${s.completed ? 'checked' : ''} data-act="tsub" data-tid="${t.id}" data-sid="${s.id}">
               <span>${esc(s.title)}</span>
               <button class="remove-sub" data-act="rsub" data-tid="${t.id}" data-sid="${s.id}">${Icons.x}</button>
@@ -580,17 +591,31 @@ const UI = {
 
   dragDrop() {
     let srcId = null;
+    let srcType = null;
+    let srcTid = null;
+
     $$('.task-card[draggable]').forEach(c => {
-      c.addEventListener('dragstart', e => { srcId = c.dataset.id; c.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
-      c.addEventListener('dragend', () => { c.classList.remove('dragging'); $$('.task-card').forEach(x => x.classList.remove('drag-over')); });
-      c.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; c.classList.add('drag-over'); });
-      c.addEventListener('dragleave', () => c.classList.remove('drag-over'));
+      c.addEventListener('dragstart', e => { 
+        if (e.target !== c) return;
+        srcId = c.dataset.id; srcType = 'task'; c.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; 
+      });
+      c.addEventListener('dragend', e => { 
+        if (e.target !== c) return;
+        c.classList.remove('dragging'); $$('.task-card').forEach(x => x.classList.remove('drag-over')); 
+      });
+      c.addEventListener('dragover', e => { 
+        if (srcType !== 'task') return;
+        e.preventDefault(); e.dataTransfer.dropEffect = 'move'; c.classList.add('drag-over'); 
+      });
+      c.addEventListener('dragleave', e => {
+        if (srcType === 'task') c.classList.remove('drag-over');
+      });
       c.addEventListener('drop', e => {
-        e.preventDefault(); c.classList.remove('drag-over');
+        if (srcType !== 'task') return;
+        e.preventDefault(); e.stopPropagation(); c.classList.remove('drag-over');
         if (srcId && srcId !== c.dataset.id) { 
           State.reorder(srcId, c.dataset.id); 
           
-          // Force sort UI to reflect manual
           const sortMenu = $('#sortMenu');
           const sortLabel = $('#sortCurrentLabel');
           if (sortMenu && sortLabel) {
@@ -604,6 +629,35 @@ const UI = {
           
           this.render(); 
           Toast.show('Reordered'); 
+        }
+      });
+    });
+
+    $$('.subtask-item[draggable]').forEach(s => {
+      s.addEventListener('dragstart', e => { 
+        e.stopPropagation();
+        srcId = s.dataset.sid; srcTid = s.dataset.tid; srcType = 'subtask'; 
+        s.classList.add('dragging-sub'); e.dataTransfer.effectAllowed = 'move'; 
+      });
+      s.addEventListener('dragend', e => { 
+        e.stopPropagation();
+        s.classList.remove('dragging-sub'); $$('.subtask-item').forEach(x => x.classList.remove('drag-over-sub')); 
+      });
+      s.addEventListener('dragover', e => { 
+        if (srcType !== 'subtask' || srcTid !== s.dataset.tid) return;
+        e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'move'; s.classList.add('drag-over-sub'); 
+      });
+      s.addEventListener('dragleave', e => {
+        e.stopPropagation();
+        if (srcType === 'subtask') s.classList.remove('drag-over-sub');
+      });
+      s.addEventListener('drop', e => {
+        if (srcType !== 'subtask') return;
+        e.preventDefault(); e.stopPropagation(); s.classList.remove('drag-over-sub');
+        if (srcId && srcId !== s.dataset.sid && srcTid === s.dataset.tid) { 
+          State.reorderSub(srcTid, srcId, s.dataset.sid); 
+          this.expandedTasks.add(srcTid);
+          this.render(); 
         }
       });
     });

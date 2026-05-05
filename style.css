@@ -539,6 +539,9 @@ body { font-family: var(--font-sans); background: var(--bg); color: var(--text-p
 .task-card.dragging { opacity: 0.4; }
 .task-card.drag-over { border-top: 2px solid var(--accent); }
 
+.subtask-item.dragging-sub { opacity: 0.4; }
+.subtask-item.drag-over-sub { border-top: 2px solid var(--accent); }
+
 /* Priority accent */
 .task-card[data-priority="high"]   { border-left: 3px solid var(--red); }
 .task-card[data-priority="medium"] { border-left: 3px solid var(--orange); }
