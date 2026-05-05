@@ -107,6 +107,7 @@ const State = {
     if (fi < 0 || ti < 0) return;
     const [item] = this.tasks.splice(fi, 1);
     this.tasks.splice(ti, 0, item);
+    this.sort = 'manual';
     this.persist();
   }
 };
@@ -586,7 +587,24 @@ const UI = {
       c.addEventListener('dragleave', () => c.classList.remove('drag-over'));
       c.addEventListener('drop', e => {
         e.preventDefault(); c.classList.remove('drag-over');
-        if (srcId && srcId !== c.dataset.id) { State.reorder(srcId, c.dataset.id); this.render(); Toast.show('Reordered'); }
+        if (srcId && srcId !== c.dataset.id) { 
+          State.reorder(srcId, c.dataset.id); 
+          
+          // Force sort UI to reflect manual
+          const sortMenu = $('#sortMenu');
+          const sortLabel = $('#sortCurrentLabel');
+          if (sortMenu && sortLabel) {
+            $$('li', sortMenu).forEach(x => x.classList.remove('active'));
+            const manualLi = sortMenu.querySelector('li[data-value="manual"]');
+            if (manualLi) {
+              manualLi.classList.add('active');
+              sortLabel.textContent = manualLi.textContent;
+            }
+          }
+          
+          this.render(); 
+          Toast.show('Reordered'); 
+        }
       });
     });
   }
